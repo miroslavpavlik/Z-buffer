@@ -15,8 +15,7 @@ public interface Raster<E> {
     void setPixel(int x, int y, E element);
 
     default boolean checkBorders(int x, int y) {
-        // TODO: doimplementovat
-        return false;
+        return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
     }
 
 }

@@ -4,11 +4,6 @@ import transforms.Col;
 
 import java.awt.image.BufferedImage;
 
-/**
- * @author KŠ
- * 11.02.2025 9:04
- */
-
 public class ZBuffer {
     private final ImageBuffer iBuffer;
     private final DepthBuffer dBuffer;
@@ -18,13 +13,15 @@ public class ZBuffer {
         this.dBuffer = new DepthBuffer(iBuffer.getWidth(), iBuffer.getHeight());
     }
 
-    /**
-     * @param x souradnice x
-     * @param y souradnice y
-     * @param z hloubka
-     * @param color barva pixelu
-     */
     public void drawPixelZTest(int x, int y, double z, Col color) {
+        if(x < 0 || x >= iBuffer.getWidth() || y < 0 || y >= iBuffer.getHeight()) {
+            return;
+        }
+        double currentZ = dBuffer.getPixel(x, y);
+        if(z < currentZ) {
+            iBuffer.setPixel(x, y, color);
+            dBuffer.setPixel(x, y, z);
+        }
         // 1. Overim, zda souradnice (x, y) lezi uvnitr platne oblasti obrazovky
         // 2. Ziskame hodnotu Z-Bufferu na danych souradnicich
         // 3. testujeme, zda je novy prvek blize ke kamere nez aktualni hodnotav Z-Bufferu
@@ -41,6 +38,7 @@ public class ZBuffer {
     }
 
     public void clear() {
-        // TODO: doimplementovat
+        iBuffer.clear();
+        dBuffer.clear();
     }
 }
