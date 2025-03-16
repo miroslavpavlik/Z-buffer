@@ -2,10 +2,6 @@ package raster;
 
 import java.nio.Buffer;
 
-/**
- * @author KŠ
- * 11.02.2025 8:59
- */
 
 public class DepthBuffer implements Raster<Double> {
     private final double[][] buffer;
@@ -17,38 +13,45 @@ public class DepthBuffer implements Raster<Double> {
         this.height = height;
         this.buffer = new double[width][height];
         this.defaultValue = 1.0d;
+        clear();
     }
 
     @Override
     public void clear() {
-        // TODO: doimplementovat
+        for(int x = 0; x < width; x++){
+            for(int y = 0; y < height; y++){
+                buffer[x][y] = defaultValue;
+            }
+        }
     }
 
     @Override
     public void setClearColor(Double element) {
-        // TODO: doimplementovat
+        this.defaultValue = element;
     }
 
     @Override
     public int getWidth() {
-        // TODO: doimplementovat
-        return 0;
+        return width;
     }
 
     @Override
     public int getHeight() {
-        // TODO: doimplementovat
-        return 0;
+        return height;
     }
 
     @Override
     public Double getPixel(int x, int y) {
-        // TODO: doimplementovat
-        return 0.0;
+        if(checkBorders(x, y)){
+            return buffer[x][y];
+        }
+        return null;
     }
 
     @Override
     public void setPixel(int x, int y, Double element) {
-        // TODO: doimplementovat
+       if(checkBorders(x, y)){
+           buffer[x][y] = element;
+       }
     }
 }

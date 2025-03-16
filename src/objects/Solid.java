@@ -2,6 +2,8 @@ package objects;
 
 import model.Vertex;
 import raster.Part;
+import transforms.Mat4;
+import transforms.Mat4Identity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ public class Solid {
     // Index buffer = TOPOLOGIE
     List<Integer> iB = new ArrayList<>();
 
+    private Mat4 modelMatrix = new Mat4Identity();
+
     public List<Part> getpB() {
         return pB;
     }
@@ -25,5 +29,12 @@ public class Solid {
 
     public List<Integer> getiB() {
         return iB;
+    }
+
+    public Mat4 getModelMatrix() {
+        return modelMatrix;
+    }
+    public void setModelMatrix(Mat4 modelMatrix) {
+        this.modelMatrix = modelMatrix;
     }
 }
