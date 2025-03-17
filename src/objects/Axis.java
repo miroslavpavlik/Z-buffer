@@ -5,11 +5,6 @@ import raster.Part;
 import transforms.Col;
 import transforms.Point3D;
 
-/**
- * @author KŠ
- * 04.03.2025 8:58
- */
-
 public class Axis extends Solid {
 
     public Axis(){

@@ -28,6 +28,7 @@ public class Renderer3D {
         for (Part part : solid.getpB()) {
             int startIndex = part.getStartIndex();
 
+
             switch (part.getTopologyType()) {
                 case LINES:
                     for (int i = 0; i < part.getCount(); i += 2) {
@@ -57,17 +58,26 @@ public class Renderer3D {
         }
     }
 
+
     private Vertex transformVertex(Vertex vertex, Mat4 model, Mat4 view, Mat4 projection) {
         Point3D transformedPos = vertex.getPosition().mul(model).mul(view).mul(projection);
         return new Vertex(transformedPos, vertex.getCol());
     }
 
     private boolean clipTriangle(Vertex a, Vertex b, Vertex c) {
-        return (a.getPosition().getW() > 0 && b.getPosition().getW() > 0 && c.getPosition().getW() > 0);
+        // Check if all vertices are outside the same plane
+        if (a.getPosition().getW() <= 0 && b.getPosition().getW() <= 0 && c.getPosition().getW() <= 0) {
+            return false; // Discard the triangle
+        }
+        return true; // Keep the triangle
     }
 
     private boolean clipLine(Vertex a, Vertex b) {
-        return (a.getPosition().getW() > 0 && b.getPosition().getW() > 0);
+        // Check if both vertices are outside the same plane
+        if (a.getPosition().getW() <= 0 && b.getPosition().getW() <= 0) {
+            return false; // Discard the line
+        }
+        return true; // Keep the line
     }
 
     private Vertex dehomogenize(Vertex vertex) {
@@ -82,6 +92,7 @@ public class Renderer3D {
         }
     }
 
+
     private Vertex viewportTransform(Vertex vertex) {
         double width = buffer.getImageBuffer().getWidth();
         double height = buffer.getImageBuffer().getHeight();
@@ -91,6 +102,7 @@ public class Renderer3D {
 
         return new Vertex(new Point3D(x, y, vertex.getPosition().getZ()), vertex.getCol());
     }
+
 
     private void rasterizeTriangle(Vertex a, Vertex b, Vertex c) {
         new TriangleRasterizer(buffer).rasterize(a, b, c);

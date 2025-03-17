@@ -1,16 +1,12 @@
 package control;
 
-import objects.Arrow;
-import objects.Axis;
-import objects.Cube;
-import objects.Solid;
+import objects.*;
 import raster.ImageBuffer;
 import raster.ZBuffer;
 import render.Renderer3D;
 import transforms.*;
 import view.Panel;
 
-import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +17,12 @@ public class Controller3D implements Controller {
     private final ZBuffer buffer;
     private final List<Solid> solids;
     private Renderer3D renderer;
+    private boolean filled;
 
     private Mat4 modelMatrix;
 
     private Camera camera;
-    private final double cameraSpeed = 1;
+    private final double cameraSpeed = 0.5;
     private int lastMouseX, lastMouseY;
     private boolean isMousePressed = false;
 
@@ -35,10 +32,12 @@ public class Controller3D implements Controller {
         this.solids = new ArrayList<>();
         this.renderer = new Renderer3D(buffer);
         this.modelMatrix = new Mat4Identity();
+        this.filled = true;
 
-
-        Cube cube = new Cube();
         Axis axis = new Axis();
+        Cuboid cuboid = new Cuboid();
+        Cube cube = new Cube();
+
         Arrow arrow = new Arrow();
         Vec3D e = new Vec3D(5, -10, 5);
         camera = new Camera()
@@ -48,10 +47,11 @@ public class Controller3D implements Controller {
 
 
 
-
-       // solids.add(cube);
         solids.add(axis);
-        //solids.add(arrow);
+        solids.add(cube);
+
+        solids.add(cuboid);
+        solids.add(arrow);
 
         initObjects(panel.getRaster());
         initListeners(panel);
@@ -76,6 +76,8 @@ public class Controller3D implements Controller {
                     case KeyEvent.VK_D -> camera = camera.right(cameraSpeed);
                     case KeyEvent.VK_UP -> camera = camera.up(cameraSpeed);
                     case KeyEvent.VK_DOWN -> camera = camera.down(cameraSpeed);
+                    case KeyEvent.VK_C -> hardClear();
+                    case KeyEvent.VK_F -> filled = !filled;
                 }
                 redraw();
             }
@@ -108,7 +110,7 @@ public class Controller3D implements Controller {
                     lastMouseX = e.getX();
                     lastMouseY = e.getY();
 
-                    double sensitivity = 0.01;
+                    double sensitivity = 0.005;
                     camera = camera.addAzimuth(deltaX * sensitivity);
                     camera = camera.addZenith(deltaY * sensitivity);
 
@@ -130,7 +132,7 @@ public class Controller3D implements Controller {
         buffer.clear();
         Mat4 view = camera.getViewMatrix();
         double fov = Math.PI / 3;
-        double aspect = (double) buffer.getImageBuffer().getWidth() / buffer.getImageBuffer().getHeight();
+        double aspect =  buffer.getImageBuffer().getHeight() / (float)buffer.getImageBuffer().getWidth();
         double near = 0.5;
         double far = 50;
         Mat4 projectionMatrix = new Mat4PerspRH(fov, aspect, near, far);
@@ -139,6 +141,7 @@ public class Controller3D implements Controller {
     }
 
     private void hardClear() {
+        buffer.clear();
         panel.clear();
     }
 

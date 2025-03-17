@@ -1,8 +1,5 @@
 package raster;
 
-import java.nio.Buffer;
-
-
 public class DepthBuffer implements Raster<Double> {
     private final double[][] buffer;
     private final int width, height;

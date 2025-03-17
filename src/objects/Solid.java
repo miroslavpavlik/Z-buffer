@@ -13,9 +13,10 @@ public class Solid {
     // Part buffer
     List<Part> pB = new ArrayList<Part>();
     // Vertex buffer = GEOMETRIE
-    List<Vertex> vB = new ArrayList<>();
+   final List<Vertex> vB = new ArrayList<>();
     // Index buffer = TOPOLOGIE
-    List<Integer> iB = new ArrayList<>();
+    final List<Integer> iB = new ArrayList<>();
+    private boolean axis;
 
     private Mat4 modelMatrix = new Mat4Identity();
 
