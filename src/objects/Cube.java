@@ -8,61 +8,68 @@ import transforms.Point3D;
 public class Cube extends Solid {
 
     public Cube() {
-        getvB().add(new Vertex(new Point3D(-1, -1, -1), new Col(255, 0, 0)));   // 0 - red
-        getvB().add(new Vertex(new Point3D(1, -1, -1), new Col(0, 255, 0)));    // 1 - green
-        getvB().add(new Vertex(new Point3D(1, 1, -1), new Col(0, 0, 255)));     // 2 - blue
-        getvB().add(new Vertex(new Point3D(-1, 1, -1), new Col(255, 255, 0)));  // 3 - yellow
-        getvB().add(new Vertex(new Point3D(-1, -1, 1), new Col(255, 0, 255)));  // 4 - magenta
-        getvB().add(new Vertex(new Point3D(1, -1, 1), new Col(0, 255, 255)));   // 5 - cyan
-        getvB().add(new Vertex(new Point3D(1, 1, 1), new Col(128, 128, 128)));  // 6 - gray
-        getvB().add(new Vertex(new Point3D(-1, 1, 1), new Col(255, 128, 0)));   // 7 - orange
+        // Define vertices of the cube
+        vB.add(new Vertex(new Point3D(0, 0, 0), new Col(255, 0, 0)));   // 0 - red
+        vB.add(new Vertex(new Point3D(1, 0, 0), new Col(0, 255, 0)));    // 1 - green
+        vB.add(new Vertex(new Point3D(1, 1, 0), new Col(0, 0, 255)));     // 2 - blue
+        vB.add(new Vertex(new Point3D(0, 1, 0), new Col(255, 255, 0)));  // 3 - yellow
+        vB.add(new Vertex(new Point3D(0, 0, 1), new Col(255, 0, 255)));  // 4 - magenta
+        vB.add(new Vertex(new Point3D(1, 0, 1), new Col(0, 255, 255)));   // 5 - cyan
+        vB.add(new Vertex(new Point3D(1, 1, 1), new Col(128, 128, 128)));  // 6 - gray
+        vB.add(new Vertex(new Point3D(0, 1, 1), new Col(255, 128, 0)));   // 7 - orange
 
+        // Define indices for the cube's triangles (6 faces, 2 triangles per face)
+        // Front face
+        iB.add(0); iB.add(1); iB.add(2); // Triangle 1
+        iB.add(0); iB.add(2); iB.add(3); // Triangle 2
 
+        // Back face
+        iB.add(4); iB.add(5); iB.add(6); // Triangle 1
+        iB.add(4); iB.add(7); iB.add(6); // Triangle 2
 
-        getiB().add(0);
-        getiB().add(1);
-        getiB().add(2);
-        getiB().add(0);
-        getiB().add(2);
-        getiB().add(3);
+        // Left face
+        iB.add(0); iB.add(1); iB.add(5); // Triangle 1
+        iB.add(0); iB.add(4); iB.add(5); // Triangle 2
 
-        getiB().add(4);
-        getiB().add(5);
-        getiB().add(6);
-        getiB().add(4);
-        getiB().add(6);
-        getiB().add(7);
+        // Right face
+        iB.add(0); iB.add(3); iB.add(7); // Triangle 1
+        iB.add(0); iB.add(4); iB.add(7); // Triangle 2
 
-        getiB().add(0);
-        getiB().add(3);
-        getiB().add(7);
-        getiB().add(0);
-        getiB().add(7);
-        getiB().add(4);
+        // Top face
+        iB.add(2); iB.add(3); iB.add(7); // Triangle 1
+        iB.add(2); iB.add(6); iB.add(7); // Triangle 2
 
-        getiB().add(1);
-        getiB().add(2);
-        getiB().add(6);
-        getiB().add(1);
-        getiB().add(6);
-        getiB().add(5);
+        // Bottom face
+        iB.add(1); iB.add(2); iB.add(6); // Triangle 1
+        iB.add(1); iB.add(5); iB.add(6); // Triangle 2
 
-        getiB().add(2);
-        getiB().add(3);
-        getiB().add(7);
-        getiB().add(2);
-        getiB().add(7);
-        getiB().add(6);
+        iB.add(0);
+        iB.add(1);
+        iB.add(1);
+        iB.add(2);
+        iB.add(2);
+        iB.add(3);
+        iB.add(3);
+        iB.add(0);
+        iB.add(4);
+        iB.add(5);
+        iB.add(5);
+        iB.add(6);
+        iB.add(6);
+        iB.add(7);
+        iB.add(7);
+        iB.add(4);
+        iB.add(0);
+        iB.add(4);
+        iB.add(1);
+        iB.add(5);
+        iB.add(2);
+        iB.add(6);
+        iB.add(3);
+        iB.add(7);
 
-        getiB().add(0);
-        getiB().add(1);
-        getiB().add(5);
-        getiB().add(0);
-        getiB().add(5);
-        getiB().add(4);
-
-
-        getpB().add(new Part(TopologyType.TRIANGLES, 0, 36));
-
+        // Define parts (12 triangles in total)
+        pB.add(new Part(TopologyType.TRIANGLES, 0, 36));
+        pB.add(new Part(TopologyType.LINES, 36,24));
     }
 }
