@@ -1,8 +1,11 @@
 package app;
 
+import model.Lerp;
+import model.Vertex;
 import raster.ImageBuffer;
 import raster.ZBuffer;
 import transforms.Col;
+import transforms.Point3D;
 
 import java.util.Random;
 
@@ -52,8 +55,19 @@ public class Tests {
     }
 
     public static void main(String[] args) {
-        ImageBuffer img = new ImageBuffer(800, 600);
+        /*ImageBuffer img = new ImageBuffer(800, 600);
         img.setClearColor(new Col(0, 0, 0)); // Nastavení barvy pozadí
-        testVisibility(img);
+        testVisibility(img);*/
+
+        Lerp<Vertex> lerp = new Lerp<>();
+        Vertex v1 = new Vertex(new Point3D(1,2,3),new Col(1.0,0.0,0.0));
+        Vertex v2 = new Vertex(new Point3D(4,5,6),new Col(0.0,1.0,0.0));
+
+        double t = 0.25;
+
+        Vertex v3 = lerp.lerp(v1, v2, t);
+        System.out.println(
+                "New interpolated vector" + v3
+        );
     }
 }

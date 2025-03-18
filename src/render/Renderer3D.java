@@ -66,6 +66,7 @@ public class Renderer3D {
 
     private boolean clipTriangle(Vertex a, Vertex b, Vertex c) {
         // Check if all vertices are outside the same plane
+
         if (a.getPosition().getW() <= 0 && b.getPosition().getW() <= 0 && c.getPosition().getW() <= 0) {
             return false; // Discard the triangle
         }

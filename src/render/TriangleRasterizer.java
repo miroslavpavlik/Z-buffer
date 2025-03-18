@@ -30,7 +30,7 @@ public class TriangleRasterizer {
         }
 
         // První polovina trojúhelníku (A -> B)
-        for (int y = (int) pa.getY(); y <= (int) pb.getY(); y++) {
+        for (double y =  pa.getY(); y <=  pb.getY(); y++) {
             double t1 = (y - pa.getY()) / (pb.getY() - pa.getY());
             double t2 = (y - pa.getY()) / (pc.getY() - pa.getY());
 
@@ -49,12 +49,12 @@ public class TriangleRasterizer {
             for (int x = (int) x1; x <= (int) x2; x++) {
                 double t3 = (x - x1) / (x2 - x1);
                 Vertex abc = ab.mul(1 - t3).add(ac.mul(t3));
-                buffer.drawPixelZTest(x, y, abc.getPosition().getZ(), abc.getCol());
+                buffer.drawPixelZTest((int)x, (int)y, abc.getPosition().getZ(), abc.getCol());
             }
         }
 
         // Druhá polovina trojúhelníku (B -> C)
-        for (int y = (int) pb.getY(); y <= (int) pc.getY(); y++) {
+        for (double y =  pb.getY(); y <=  pc.getY(); y++) {
             double t1 = (y - pb.getY()) / (pc.getY() - pb.getY());
             double t2 = (y - pa.getY()) / (pc.getY() - pa.getY());
 
@@ -73,7 +73,7 @@ public class TriangleRasterizer {
             for (int x = (int) x1; x <= (int) x2; x++) {
                 double t3 = (x - x1) / (x2 - x1);
                 Vertex abc = bc.mul(1 - t3).add(ac.mul(t3));
-                buffer.drawPixelZTest(x, y, abc.getPosition().getZ(), abc.getCol());
+                buffer.drawPixelZTest((int)x, (int)y, abc.getPosition().getZ(), abc.getCol());
             }
         }
     }

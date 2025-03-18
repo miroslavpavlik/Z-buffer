@@ -47,7 +47,7 @@ public class ImageBuffer implements Raster<Col> {
     public void clear() {
         Graphics g = img.getGraphics();
         g.setColor(new Color(color.getRGB()));
-        g.clearRect(0, 0, img.getWidth() - 1, img.getHeight() - 1);
+        g.clearRect(0, 0, img.getWidth(), img.getHeight());
     }
 
     @Override

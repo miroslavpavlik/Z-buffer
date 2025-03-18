@@ -51,7 +51,7 @@ public class Controller3D implements Controller {
         solids.add(cube);
 
         solids.add(cuboid);
-        solids.add(arrow);
+       // solids.add(arrow);
 
         initObjects(panel.getRaster());
         initListeners(panel);
