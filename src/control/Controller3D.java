@@ -17,10 +17,9 @@ public class Controller3D implements Controller {
     private final ZBuffer buffer;
     private final List<Solid> solids;
     private Renderer3D renderer;
-    private boolean filled;
-
-    private Mat4 modelMatrix;
-
+    private boolean isPerspective = true;
+    private boolean wiredModel = false;
+    private Solid selectedSolid;
     private Camera camera;
     private final double cameraSpeed = 0.5;
     private int lastMouseX, lastMouseY;
@@ -31,27 +30,13 @@ public class Controller3D implements Controller {
         this.buffer = new ZBuffer(panel.getRaster());
         this.solids = new ArrayList<>();
         this.renderer = new Renderer3D(buffer);
-        this.modelMatrix = new Mat4Identity();
-        this.filled = true;
 
-        Axis axis = new Axis();
-        Cuboid cuboid = new Cuboid();
-        Cube cube = new Cube();
 
-        Arrow arrow = new Arrow();
         Vec3D e = new Vec3D(5, -10, 5);
         camera = new Camera()
                 .withPosition(e)
                 .withAzimuth(Math.toRadians(100))
                 .withZenith(Math.toRadians(-15));
-
-
-
-        solids.add(axis);
-        solids.add(cube);
-
-        solids.add(cuboid);
-       // solids.add(arrow);
 
         initObjects(panel.getRaster());
         initListeners(panel);
@@ -60,8 +45,17 @@ public class Controller3D implements Controller {
 
     public void initObjects(ImageBuffer raster) {
         raster.setClearColor(new Col(0x16161D));
+        Axis axis = new Axis();
+        Cuboid cuboid = new Cuboid();
+        Cube cube = new Cube();
+        Arrow arrow = new Arrow();
+
+        solids.add(axis);
+        solids.add(cube);
+        solids.add(cuboid);
+       // solids.add(arrow);
         buffer.clear();
-        // TODO: vhodne dokoncit
+        selectedSolid = cube;
     }
 
     @Override
@@ -74,10 +68,20 @@ public class Controller3D implements Controller {
                     case KeyEvent.VK_S -> camera = camera.backward(cameraSpeed);
                     case KeyEvent.VK_A -> camera = camera.left(cameraSpeed);
                     case KeyEvent.VK_D -> camera = camera.right(cameraSpeed);
-                    case KeyEvent.VK_UP -> camera = camera.up(cameraSpeed);
-                    case KeyEvent.VK_DOWN -> camera = camera.down(cameraSpeed);
                     case KeyEvent.VK_C -> hardClear();
-                    case KeyEvent.VK_F -> filled = !filled;
+                    case KeyEvent.VK_P -> isPerspective = !isPerspective;
+                    case KeyEvent.VK_F -> wiredModel = !wiredModel;
+                    case KeyEvent.VK_1 -> selectedSolid = solids.get(1);
+                    case KeyEvent.VK_2 -> selectedSolid = solids.get(2);
+                    case KeyEvent.VK_X -> selectedSolid.rotate(Math.toRadians(10), 0, 0);
+                    case KeyEvent.VK_Y -> selectedSolid.rotate(0, Math.toRadians(10), 0);
+                    case KeyEvent.VK_Z -> selectedSolid.rotate(0, 0, Math.toRadians(10));
+                    case KeyEvent.VK_UP -> selectedSolid.translate(new Vec3D(0, 0, 1));
+                    case KeyEvent.VK_DOWN -> selectedSolid.translate(new Vec3D(0, 0, -1));
+                    case KeyEvent.VK_LEFT -> selectedSolid.translate(new Vec3D(1, 0, 0));
+                    case KeyEvent.VK_RIGHT -> selectedSolid.translate(new Vec3D(-1, 0, 0));
+                    case KeyEvent.VK_M -> selectedSolid.scale(1.1,1.1,1.1);
+                    case KeyEvent.VK_N -> selectedSolid.scale(0.9,0.9,0.9);
                 }
                 redraw();
             }
@@ -131,12 +135,21 @@ public class Controller3D implements Controller {
     private void redraw() {
         buffer.clear();
         Mat4 view = camera.getViewMatrix();
-        double fov = Math.PI / 3;
-        double aspect =  buffer.getImageBuffer().getHeight() / (float)buffer.getImageBuffer().getWidth();
-        double near = 0.5;
-        double far = 50;
-        Mat4 projectionMatrix = new Mat4PerspRH(fov, aspect, near, far);
-        renderer.renderSolids(solids, modelMatrix, view, projectionMatrix);
+        Mat4 projectionMatrix;
+        if (isPerspective) {
+            double fov = Math.PI / 3;
+            double aspect = buffer.getImageBuffer().getHeight() / (float)buffer.getImageBuffer().getWidth();
+            double near = 0.5;
+            double far = 50;
+            projectionMatrix = new Mat4PerspRH(fov, aspect, near, far);
+        } else {
+            double width = 20;
+            double height = width * buffer.getImageBuffer().getHeight() / (float)buffer.getImageBuffer().getWidth();
+            double near = 0.5;
+            double far = 50;
+            projectionMatrix = new Mat4OrthoRH(width, height, near, far);
+        }
+        renderer.renderSolids(solids, view, projectionMatrix, wiredModel);
         panel.repaint();
     }
 
