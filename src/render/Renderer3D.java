@@ -5,18 +5,20 @@ import model.Vertex;
 import objects.Solid;
 import raster.Part;
 import raster.ZBuffer;
-import transforms.Mat4;
-import transforms.Point3D;
-import transforms.Vec3D;
+import shade.FragmentShader;
+import shade.SmoothColor;
+import transforms.*;
 
 import java.util.List;
 import java.util.Optional;
 
 public class Renderer3D {
     private final ZBuffer buffer;
+    private FragmentShader shader;
 
     public Renderer3D(ZBuffer buffer) {
         this.buffer = buffer;
+        this.shader = new SmoothColor();
     }
 
     public void renderSolids(List<Solid> solids, Mat4 view, Mat4 projection, Boolean wiredModel) {
@@ -51,11 +53,13 @@ public class Renderer3D {
 
                         clipTriangle(a, b, c, wiredModel);
                     }
+
                     break;
+
             }
+
         }
     }
-
 
     private Vertex transformVertex(Vertex vertex, Mat4 model, Mat4 view, Mat4 projection) {
         Point3D transformedPos = vertex.getPosition().mul(model).mul(view).mul(projection);
@@ -171,13 +175,16 @@ public class Renderer3D {
 
         return new Vertex(new Point3D(x, y, vertex.getPosition().getZ()), vertex.getCol());
     }
+    public void setShader(FragmentShader shader) {
 
+        this.shader = shader;
+    }
 
     private void rasterizeTriangle(Vertex a, Vertex b, Vertex c) {
-        new TriangleRasterizer(buffer).rasterize(a, b, c);
+        new TriangleRasterizer(buffer, shader).rasterize(a, b, c);
     }
 
     private void rasterizeLine(Vertex a, Vertex b) {
-        new LineRasterizer(buffer).rasterize(a, b);
+        new LineRasterizer(buffer, shader).rasterize(a, b);
     }
 }

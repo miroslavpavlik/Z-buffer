@@ -2,70 +2,71 @@ package objects;
 
 import model.Vertex;
 import raster.Part;
-import transforms.Col;
-import transforms.Point3D;
-import transforms.Cubic;
+import transforms.*;
 
 public class BezierSurface extends Solid {
 
-    private final Point3D[][] controlPoints; // Mřížka 3x3 kontrolních bodů
-    private final int resolution; // Rozlišení plochy (počet bodů podél každého parametru)
+    public BezierSurface() {
+        double offsetX = 2.0;
+        double offsetZ = 1.5;
 
-    public BezierSurface(Point3D[][] controlPoints, int resolution, Col color) {
-        this.controlPoints = controlPoints;
-        this.resolution = resolution;
-        generateSurface(color);
-    }
+        Point3D[] controlPoints = new Point3D[]{
+                new Point3D(0 + offsetX, 0, 0 + offsetZ),
+                new Point3D(1 + offsetX, 0, 0 + offsetZ),
+                new Point3D(2 + offsetX, 0, 0 + offsetZ),
+                new Point3D(3 + offsetX, 0, 0 + offsetZ),
 
-    private void generateSurface(Col color) {
-        // Výpočet bodů na ploše
-        for (int i = 0; i < resolution; i++) {
-            double u = (double) i / (resolution - 1); // Parametr u
+                new Point3D(0 + offsetX, 1, 0.5 + offsetZ),
+                new Point3D(1 + offsetX, 1, 1 + offsetZ),
+                new Point3D(2 + offsetX, 1, 1 + offsetZ),
+                new Point3D(3 + offsetX, 1, 0.5 + offsetZ),
 
-            for (int j = 0; j < resolution; j++) {
-                double v = (double) j / (resolution - 1); // Parametr v
+                new Point3D(0 + offsetX, 2, 0.5 + offsetZ),
+                new Point3D(1 + offsetX, 2, 1 + offsetZ),
+                new Point3D(2 + offsetX, 2, 1 + offsetZ),
+                new Point3D(3 + offsetX, 2, 0.5 + offsetZ),
 
-                // Výpočet bodu na ploše
-                Point3D point = computePointOnSurface(u, v);
-                getvB().add(new Vertex(point, color));
+                new Point3D(0 + offsetX, 3, 0 + offsetZ),
+                new Point3D(1 + offsetX, 3, 0 + offsetZ),
+                new Point3D(2 + offsetX, 3, 0 + offsetZ),
+                new Point3D(3 + offsetX, 3, 0 + offsetZ)
+        };
+
+        Bicubic bicubic = new Bicubic(Cubic.BEZIER, controlPoints);
+
+        int resolution = 10;
+        for (int i = 0; i <= resolution; i++) {
+            double u = (double) i / resolution;
+            for (int j = 0; j <= resolution; j++) {
+                double v = (double) j / resolution;
+                Point3D point = bicubic.compute(u, v);
+
+                int red = (int) Math.min(255, 50 + point.getY() * 50);
+                int green = (int) Math.min(255, 100 + point.getY() * 30);
+                int blue = (int) Math.min(255, 200 - point.getY() * 40);
+
+                Col color = new Col(red, green, blue);
+                vB.add(new Vertex(point, color));
             }
         }
-
-        // Triangulace plochy
-        for (int i = 0; i < resolution - 1; i++) {
-            for (int j = 0; j < resolution - 1; j++) {
-                int topLeft = i * resolution + j;
+        for (int i = 0; i < resolution; i++) {
+            for (int j = 0; j < resolution; j++) {
+                int topLeft = i * (resolution + 1) + j;
                 int topRight = topLeft + 1;
-                int bottomLeft = (i + 1) * resolution + j;
+                int bottomLeft = (i + 1) * (resolution + 1) + j;
                 int bottomRight = bottomLeft + 1;
 
-                // První trojúhelník
-                getiB().add(topLeft);
-                getiB().add(topRight);
-                getiB().add(bottomLeft);
 
-                // Druhý trojúhelník
-                getiB().add(bottomLeft);
-                getiB().add(topRight);
-                getiB().add(bottomRight);
+                iB.add(topLeft);
+                iB.add(topRight);
+                iB.add(bottomLeft);
+
+                iB.add(topRight);
+                iB.add(bottomRight);
+                iB.add(bottomLeft);
             }
         }
 
-        // Nastavení částí (parts)
-        getpB().add(new Part(TopologyType.TRIANGLES, 0, getiB().size()));
-    }
-
-    private Point3D computePointOnSurface(double u, double v) {
-        Point3D[] rowPoints = new Point3D[3];
-
-        // Výpočet bodů podél řádků (pro dané u)
-        for (int i = 0; i < 3; i++) {
-            Cubic cubic = new Cubic(Cubic.BEZIER, controlPoints[i][0], controlPoints[i][1], controlPoints[i][2], controlPoints[i][2]);
-            rowPoints[i] = cubic.compute(u);
-        }
-
-        // Výpočet bodu podél sloupce (pro dané v)
-        Cubic cubic = new Cubic(Cubic.BEZIER, rowPoints[0], rowPoints[1], rowPoints[2], rowPoints[2]);
-        return cubic.compute(v);
+        pB.add(new Part(TopologyType.TRIANGLES, 0, resolution * resolution * 6));
     }
 }

@@ -41,7 +41,6 @@ public class Cuboid extends Solid {
         getiB().add(9); getiB().add(11); getiB().add(10);
         getiB().add(9); getiB().add(10); getiB().add(8);
 
-        // Define parts (triangles)
         getpB().add(new Part(TopologyType.TRIANGLES, 0, 20 * 3));
     }
 }

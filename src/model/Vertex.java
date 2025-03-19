@@ -6,6 +6,8 @@ import transforms.Point3D;
 public class Vertex implements IVectorizable<Vertex> {
     private final Point3D position;
     private final Col col;
+    private double texU;
+    private double texV;
     // Prezentace 01, Slide 168
     // UV
     // normal
@@ -19,6 +21,31 @@ public class Vertex implements IVectorizable<Vertex> {
         this.position = position;
         this.col = col;
     }
+
+    public Vertex(Point3D position, Col col, double texU, double texV) {
+        this.position = position;
+        this.col = col;
+        this.texU = texU;
+        this.texV = texV;
+    }
+
+    public double getTexU() {
+        return texU;
+    }
+
+    public void setTexU(double texU) {
+        this.texU = texU;
+    }
+
+    public double getTexV() {
+        return texV;
+    }
+
+    public void setTexV(double texV) {
+        this.texV = texV;
+    }
+
+
 
     public Col getCol() {
         return col;
@@ -46,21 +73,21 @@ public class Vertex implements IVectorizable<Vertex> {
 
     @Override
     public Vertex add(Vertex item) {
-
-        return new Vertex(position.add(item.position), col.add(item.col).saturate()
-                // UV
-                // normal
-                // one
+        return new Vertex(
+                position.add(item.position),
+                col.add(item.col).saturate(),
+                texU + item.texU,
+                texV + item.texV
         );
     }
 
     @Override
     public Vertex mul(double k) {
-
-        return new Vertex(position.mul(k), col.mul(k).saturate()
-                // UV
-                // normal
-                // one
+        return new Vertex(
+                position.mul(k),
+                col.mul(k).saturate(),
+                texU * k,
+                texV * k
         );
     }
 }

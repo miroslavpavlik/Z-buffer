@@ -2,13 +2,18 @@ package render;
 
 import raster.ZBuffer;
 import model.Vertex;
+import shade.FragmentShader;
+import transforms.Col;
 
 public class LineRasterizer {
 
     private final ZBuffer buffer;
+    private final FragmentShader shader;
 
-    public LineRasterizer(ZBuffer buffer) {
+
+    public LineRasterizer(ZBuffer buffer, FragmentShader shader) {
         this.buffer = buffer;
+        this.shader = shader;
     }
 
     public void rasterize(Vertex start, Vertex end) {
@@ -31,8 +36,8 @@ public class LineRasterizer {
                     Math.sqrt((x2 - start.getPosition().getX()) * (x2 - start.getPosition().getX()) +
                             (y2 - start.getPosition().getY()) * (y2 - start.getPosition().getY()));
             double z = z1 + t * (z2 - z1);
-
-            buffer.drawPixelZTest(x1, y1, z, start.getCol());
+            Col color = shader.getColor(start);
+            buffer.drawPixelZTest(x1, y1, z, color);
 
             if (x1 == x2 && y1 == y2) break;
 

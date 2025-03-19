@@ -1,17 +1,23 @@
 package render;
+
+import model.Lerp;
 import model.Vertex;
 import raster.ZBuffer;
+import shade.FragmentShader;
+import transforms.Col;
 import transforms.Vec2D;
 
 public class TriangleRasterizer {
     private final ZBuffer buffer;
+    private final FragmentShader shader;
+    private final Lerp<Vertex> lerp = new Lerp<>();
 
-    public TriangleRasterizer(ZBuffer buffer) {
+    public TriangleRasterizer(ZBuffer buffer, FragmentShader shader) {
         this.buffer = buffer;
+        this.shader = shader;
     }
 
     public void rasterize(Vertex a, Vertex b, Vertex c) {
-        // Serazeni vrcholu podle y hodnoty
         Vec2D pa = new Vec2D(a.getPosition().getX(), a.getPosition().getY());
         Vec2D pb = new Vec2D(b.getPosition().getX(), b.getPosition().getY());
         Vec2D pc = new Vec2D(c.getPosition().getX(), c.getPosition().getY());
@@ -29,7 +35,6 @@ public class TriangleRasterizer {
             Vertex tempV = b; b = c; c = tempV;
         }
 
-        // 1st polovina trojuhelniku
         for (double y = pa.getY(); y <= pb.getY(); y++) {
             double t1 = (y - pa.getY()) / (pb.getY() - pa.getY());
             double t2 = (y - pa.getY()) / (pc.getY() - pa.getY());
@@ -37,8 +42,8 @@ public class TriangleRasterizer {
             double x1 = (1 - t1) * pa.getX() + t1 * pb.getX();
             double x2 = (1 - t2) * pa.getX() + t2 * pc.getX();
 
-            Vertex ab = a.mul(1 - t1).add(b.mul(t1));
-            Vertex ac = a.mul(1 - t2).add(c.mul(t2));
+            Vertex ab = lerp.lerp(a, b, t1);
+            Vertex ac = lerp.lerp(a, c, t2);
 
             if (x1 > x2) {
                 double tempX = x1; x1 = x2; x2 = tempX;
@@ -47,12 +52,12 @@ public class TriangleRasterizer {
 
             for (int x = (int) x1; x <= (int) x2; x++) {
                 double t3 = (x - x1) / (x2 - x1);
-                Vertex abc = ab.mul(1 - t3).add(ac.mul(t3));
-                buffer.drawPixelZTest(x, (int)y, abc.getPosition().getZ(), abc.getCol());
+                Vertex abc = lerp.lerp(ab, ac, t3);
+                Col color = shader.getColor(abc);
+                buffer.drawPixelZTest(x, (int)y, abc.getPosition().getZ(), color);
             }
         }
 
-        // 2nd polovina trojuhelniku
         for (double y = pb.getY(); y <= pc.getY(); y++) {
             double t1 = (y - pb.getY()) / (pc.getY() - pb.getY());
             double t2 = (y - pa.getY()) / (pc.getY() - pa.getY());
@@ -60,8 +65,8 @@ public class TriangleRasterizer {
             double x1 = (1 - t1) * pb.getX() + t1 * pc.getX();
             double x2 = (1 - t2) * pa.getX() + t2 * pc.getX();
 
-            Vertex bc = b.mul(1 - t1).add(c.mul(t1));
-            Vertex ac = a.mul(1 - t2).add(c.mul(t2));
+            Vertex bc = lerp.lerp(b, c, t1);
+            Vertex ac = lerp.lerp(a, c, t2);
 
             if (x1 > x2) {
                 double tempX = x1; x1 = x2; x2 = tempX;
@@ -70,8 +75,9 @@ public class TriangleRasterizer {
 
             for (int x = (int) x1; x <= (int) x2; x++) {
                 double t3 = (x - x1) / (x2 - x1);
-                Vertex abc = bc.mul(1 - t3).add(ac.mul(t3));
-                buffer.drawPixelZTest(x, (int)y, abc.getPosition().getZ(), abc.getCol());
+                Vertex abc = lerp.lerp(bc, ac, t3);
+                Col color = shader.getColor(abc);
+                buffer.drawPixelZTest(x, (int)y, abc.getPosition().getZ(), color);
             }
         }
     }

@@ -1,5 +1,5 @@
 package objects;
 
 public enum TopologyType {
-    POINTS, LINES, TRIANGLES
+    POINTS, LINES, TRIANGLES,AXIS
 }
