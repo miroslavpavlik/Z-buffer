@@ -29,24 +29,6 @@ public class Vertex implements IVectorizable<Vertex> {
         this.texV = texV;
     }
 
-    public double getTexU() {
-        return texU;
-    }
-
-    public void setTexU(double texU) {
-        this.texU = texU;
-    }
-
-    public double getTexV() {
-        return texV;
-    }
-
-    public void setTexV(double texV) {
-        this.texV = texV;
-    }
-
-
-
     public Col getCol() {
         return col;
     }

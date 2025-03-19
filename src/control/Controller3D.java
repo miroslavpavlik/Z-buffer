@@ -20,14 +20,15 @@ public class Controller3D implements Controller {
     private ZBuffer buffer;
     private final List<Solid> solids = new ArrayList<>();
     private Renderer3D renderer;
+
     private boolean isPerspective = true;
     private boolean wiredModel = false;
+
     private Solid selectedSolid;
     private Camera camera;
     private final double cameraSpeed = 0.5;
     private int lastMouseX, lastMouseY;
     private boolean isMousePressed = false;
-
     private Solid animatedCube;
     private Timer animationTimer;
     private boolean isAnimating = false;
@@ -42,7 +43,6 @@ public class Controller3D implements Controller {
 
     public void initObjects(ImageBuffer raster) {
         raster.setClearColor(new Col(0x16161D));
-
         Axis axis = new Axis();
         Cuboid cuboid = new Cuboid();
         Cube cube = new Cube();
@@ -55,7 +55,6 @@ public class Controller3D implements Controller {
                 .withPosition(e)
                 .withAzimuth(Math.toRadians(-120))
                 .withZenith(Math.toRadians(-20));
-
 
         animatedCube.translate(new Vec3D(0, 0, 0));
 
@@ -70,6 +69,7 @@ public class Controller3D implements Controller {
         buffer.clear();
         selectedSolid = cube;
         renderer = new Renderer3D(buffer);
+
     }
 
     private void startAnimation() {
