@@ -21,8 +21,8 @@ public class Arrow extends Solid {
         getiB().add(3);
         getiB().add(4);
 
-        getpB().add(new Part(TopologyType.LINES, 0, 2)); // 2 vrcholy (0 a 1)
+        getpB().add(new Part(TopologyType.LINES, 0, 2));
 
-        getpB().add(new Part(TopologyType.TRIANGLES, 2, 3)); // 3 vrcholy (2, 3, 4)
+        getpB().add(new Part(TopologyType.TRIANGLES, 2, 3));
     }
 }
