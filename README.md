@@ -37,5 +37,3 @@ _(Poznámka: Objekt se neoznačuje vizuálně.)_
 ### Animace
 - **Zapnutí/vypnutí animace vybraného tělesa**: `R`
 
-Repozitář projektu: [GitLab](https://gitlab.com/pgrf12243341/c04_pavlik_miroslav.git)
-
